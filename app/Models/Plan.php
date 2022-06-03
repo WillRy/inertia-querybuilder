@@ -25,7 +25,7 @@ class Plan extends Model
 
     public function searchPlans($filters = [])
     {
-        $query = DB::table("plans");
+        $query = DB::table("plans")->orderBy($filters["sortName"], $filters["sortOrder"]);
         if(!empty($filters["search"])) {
             $query
                 ->where("name", 'like', "%{$filters['search']}%")
