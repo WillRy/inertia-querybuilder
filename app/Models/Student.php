@@ -42,6 +42,7 @@ class Student extends Model
 
         return $query
             ->where("tenant_id", "=", Auth::user()->tenant_id)
+            ->orderBy($filters["sortName"], $filters["sortOrder"])
             ->paginate(10);
     }
 
