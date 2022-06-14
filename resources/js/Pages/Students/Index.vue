@@ -131,9 +131,10 @@
         <ModalAddStudent
             :aberta="abrirModalCadastro"
             @onClose="abrirModalCadastro = false"
+            :reload="['total','students','flash']"
         />
-        <ModalEditStudent/>
-        <ModalRemoveStudent/>
+        <ModalEditStudent :reload="['total','students','flash']"/>
+        <ModalRemoveStudent :reload="['total','students','flash']"/>
     </div>
 </template>
 
@@ -175,8 +176,8 @@ export default {
                 {name: 'Feminino', id: 'f'},
                 {name: 'Outro', id: 'o'},
             ],
-            sortName: "id",
-            sortOrder: "asc",
+            sortName: this.filters.sortName,
+            sortOrder: this.filters.sortOrder,
         }
     },
     computed: {
@@ -226,6 +227,7 @@ export default {
                 ...(this.sortName ? {sortName: this.sortName || 'id'} : {}),
                 ...(this.sortOrder ? {sortOrder: this.sortOrder || 'asc'} : {}),
             }, {
+                only: ['total','students','flash'],
                 preserveState: true,
                 onSuccess: () => {
                     this.loading = false
