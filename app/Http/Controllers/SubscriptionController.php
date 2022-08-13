@@ -37,13 +37,9 @@ class SubscriptionController extends Controller
                 $request->input("plan")
             );
 
-            return response()->json([
-                "data" => $subs
-            ]);
+            return $this->responseJSON($subs);
         } catch (\Exception $e) {
-            return response()->json([
-                "error" => $e->getMessage()
-            ], 500);
+            return $this->errorJSON($e->getMessage());
         }
     }
 
@@ -52,13 +48,9 @@ class SubscriptionController extends Controller
         try {
             $subs = (new Subscription())->getByID($id);
 
-            return response()->json([
-                "data" => $subs
-            ]);
+            return $this->responseJSON($subs);
         } catch (\Exception $e) {
-            return response()->json([
-                "error" => $e->getMessage()
-            ], 500);
+            return $this->errorJSON($e->getMessage());
         }
     }
 
@@ -82,16 +74,12 @@ class SubscriptionController extends Controller
             $data["dt_start"] = Carbon::make($data["dt_start"])->format("Y-m-d");
             $data["dt_end"] = Carbon::make($data["dt_start"])->addMonths($plan->duration)->format("Y-m-d");
 
-            $sub = (new Subscription())->createSubscription($data);
+            $returnData = (new Subscription())->createSubscription($data);
 
-            return response()->json([
-                "data" => $sub,
-                "success" => "Matrícula criada com sucesso!"
-            ]);
+            return $this->successInertia('Matrícula criada com sucesso!',null, [], $returnData);
+
         } catch (\Exception $e) {
-            return response()->json([
-                "error" => $e->getMessage()
-            ], 500);
+            return $this->errorInertia($e->getMessage());
         }
     }
 
@@ -107,14 +95,11 @@ class SubscriptionController extends Controller
 
             (new Subscription())->updateSubscription($id, $data);
 
-            return response()->json([
-                "data" => (new Subscription())->getByID($id),
-                "success" => "Matrícula editada com sucesso!"
-            ]);
+	        $returnData = (new Subscription())->getByID($subscription->id);
+
+            return $this->successInertia("Matrícula editada com sucesso!",null, [], $returnData);
         } catch (\Exception $e) {
-            return response()->json([
-                "error" => $e->getMessage()
-            ], 500);
+            return $this->errorInertia($e->getMessage());
         }
     }
 
@@ -123,20 +108,11 @@ class SubscriptionController extends Controller
         try {
             $sub = (new Subscription())->getByID($id);
 
-            if(empty($sub)) {
-                return response()->json([
-                    "error" => "Not found"
-                ], 404);
-            }
-
-
             (new Subscription())->deleteByID($id);
 
-            return response()->json([], 204);
+            return $this->successInertia("Matrícula excluída com sucesso!");
         } catch (\Exception $e) {
-            return response()->json([
-                "error" => $e->getMessage()
-            ], 500);
+            return $this->errorInertia($e->getMessage());
         }
     }
 }

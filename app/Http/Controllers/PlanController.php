@@ -24,7 +24,7 @@ class PlanController extends Controller
             "sortOrder" => $request->input("sortOrder", "asc")
         ];
         $plans = (new Plan())->searchPlans($filters);
-        return response()->json($plans);
+        return $this->responseJSON($plans);
     }
 
     public function store(PlanStoreUpdateRequest $request)
@@ -32,13 +32,9 @@ class PlanController extends Controller
         try {
             $student = (new Plan())->createPlan($request->all());
 
-            return response()->json([
-                "data" => $student
-            ]);
+            return $this->successInertia("Plano criado com sucesso!");
         } catch (\Exception $e) {
-            return response()->json([
-                "error" => $e->getMessage()
-            ], 500);
+            return $this->errorInertia($e->getMessage());
         }
     }
 
@@ -53,13 +49,9 @@ class PlanController extends Controller
                 ], 404);
             }
 
-            return response()->json([
-                "data" => $plan
-            ]);
+            return $this->responseJSON($plan);
         } catch (\Exception $e) {
-            return response()->json([
-                "error" => $e->getMessage()
-            ], 500);
+            return $this->errorJSON($e->getMessage());
         }
     }
 
@@ -77,13 +69,9 @@ class PlanController extends Controller
             (new Plan())->updatePlan($id, $request->all());
 
 
-            return response()->json([
-                "data" => $plan
-            ]);
+            return $this->successInertia("Plano editado com sucesso!");
         } catch (\Exception $e) {
-            return response()->json([
-                "error" => $e->getMessage()
-            ], 500);
+            return $this->errorInertia($e->getMessage());
         }
     }
 
@@ -93,25 +81,19 @@ class PlanController extends Controller
             $plan = (new Plan())->getByID($id);
 
             if (empty($plan)) {
-                return response()->json([
-                    "error" => "Not found"
-                ], 404);
+                return $this->errorInertia("Plano não encontrado");
             }
 
             if ((new Subscription())->subscriptionUsedByPlan($id)) {
-                return response()->json([
-                    "error" => "Plano usado em alguma matrícula"
-                ], 422);
+                return $this->errorInertia("Plano usado em alguma matrícula");
             }
 
             (new Plan())->deletePlan($id);
 
 
-            return response()->json([], 204);
+            return $this->successInertia("Plano excluído com sucesso!");
         } catch (\Exception $e) {
-            return response()->json([
-                "error" => $e->getMessage()
-            ], 500);
+            return $this->errorInertia($e->getMessage());
         }
     }
 

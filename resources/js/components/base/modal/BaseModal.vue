@@ -2,10 +2,10 @@
     <transition name="modal">
         <div v-if="aberta" :class="{aberta: aberta, center: textCenter}" class="base-modal-container"
              @click.self="fecharModalClick">
-            <div :style="{padding: padding}" class="base-modal" data-modal="">
-                <span class="btn-fechar-modal" @click="fecharModal" v-if="exibirBtnFechar"></span>
-
+            <div :style="{padding: padding}" class="base-modal" :class="tamanhoClass" data-modal="">
                 <div v-if="$slots.title" class="base-modal-title">
+                    <img v-if="exibirBtnFechar" class="btn-fechar-modal" src="/img/icons/close-modal.png"
+                         @click="fecharModal"/>
                     <slot name="title"></slot>
                 </div>
 
@@ -41,12 +41,29 @@ export default {
         },
         textCenter: {
             default: false
+        },
+        tamanho: {
+            default: 'sm'
         }
     },
     watch: {
         aberta(valor) {
             if (valor) {
                 this.$emit('onOpen')
+            }
+        }
+    },
+    computed: {
+        tamanhoClass() {
+            switch (this.tamanho) {
+                case 'sm':
+                    return 'modal-sm'
+                case 'md':
+                    return 'modal-md'
+                case 'lg':
+                    return 'modal-lg'
+                default:
+                    return 'modal-sm'
             }
         }
     },
@@ -77,7 +94,7 @@ export default {
     left: 0;
     position: fixed;
     top: 0;
-    z-index: 1000;
+    z-index: 2000;
     height: 100vh;
     width: 100vw;
 
@@ -96,15 +113,39 @@ export default {
     padding: 30px;
     /* width: 650px; */
     margin: 120px 0;
-    position: relative;
     max-width: 650px;
     width: 65vw;
+}
+
+.base-modal.modal-sm {
+    max-width: 650px;
+    width: 65vw;
+}
+
+.base-modal.modal-md {
+    max-width: 850px;
+    width: 85vw;
+}
+
+.base-modal.modal-lg {
+    max-width: 950px;
+    width: 95vw;
+}
+
+.base-modal-container.lg .base-modal {
+    max-width: 920px;
+    width: 100%;
 }
 
 @media all and (max-width: 620px) {
     .base-modal {
         width: 90%;
     }
+}
+
+
+.base-modal-title {
+    position: relative;
 }
 
 .base-modal-title h3 {
@@ -134,18 +175,19 @@ export default {
     gap: 16px;
 }
 
-/* display: grid; */
-/* grid-template-columns: repeat(auto-fit, minmax(156px, 33%));
 
+@keyframes fadeInDown {
+    0% {
+        opacity: 0;
+        transform: translateZ(-20px)
+    }
+
+    to {
+        opacity: 1;
+        transform: translateZ(0px)
+    }
 }
 
-/*.base-modal .base-modal-footer > *:not(:last-child) {*/
-/*    margin-right: 16px;*/
-/*}*/
-
-/*.base-modal .base-modal-footer > * {*/
-/*    margin-bottom: 16px;*/
-/*}*/
 
 .modal-enter-active,
 .modal-leave-active {
@@ -162,45 +204,20 @@ export default {
 }
 
 
-@keyframes fadeInDown {
-    0% {
-        opacity: 0;
-        transform: translateZ(-20px)
-    }
-
-    to {
-        opacity: 1;
-        transform: translateZ(0px)
-    }
-}
 
 .btn-fechar-modal {
     cursor: pointer;
-    top: 20px;
-    right: 20px;
-    margin: 0;
-    padding: 0;
-    border: 0;
-    background: none;
+    display: block;
     position: absolute;
-    width: 20px;
+    top: -10px;
+    right: -10px;
     height: 20px;
+    width: 20px;
 }
 
-
-.btn-fechar-modal:after, .btn-fechar-modal:before {
-    content: "";
-    position: absolute;
-    top: 10px;
-    left: 0;
-    right: 0;
-    height: 1px;
-    background: #000;
-    border-radius: 1px;
-    transform: rotate(-45deg);
-}
 
 .btn-fechar-modal:before {
+    right: 6px;
     transform: rotate(45deg);
 }
 

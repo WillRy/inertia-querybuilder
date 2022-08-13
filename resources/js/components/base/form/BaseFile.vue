@@ -5,7 +5,7 @@
             <div v-if="$slots.icon" class="form-group-icon">
                 <slot name="icon"></slot>
             </div>
-            <input v-bind="attrs" :value="modelValue"  @input="updateValue">
+            <input @input="updateValue" v-bind="$attrs" type="file" ref="input">
         </div>
         <div v-if="error || $slots.error" class="errorMessage">
             <div>{{ error }}</div>
@@ -17,14 +17,14 @@
 
 <script>
 export default {
-    name: "BaseInput",
+    name: "BaseFile",
     inheritAttrs: false,
     props: {
         label: {
             type: String,
             default: ''
         },
-        modelValue: [String, Number],
+        modelValue: [String, Number, File, Object],
         mb: {
             default: '20px'
         },
@@ -33,7 +33,7 @@ export default {
         },
         error: {
             type: String,
-        }
+        },
     },
     computed: {
         attrs() {
@@ -43,11 +43,40 @@ export default {
             }
         }
     },
-    methods: {
-        updateValue(event) {
-            this.$emit('update:modelValue', event.target.value)
+    data() {
+        return {
+            file: null
         }
     },
+    watch: {
+      modelValue: {
+        deep: true,
+        handler(valor) {
+          this.file = valor;
+
+          //limpa ao zerar valor
+          if (!valor) this.limparCampo();
+        }
+      },
+    },
+    methods: {
+        limparCampo(){
+            this.$refs.input.value = "";
+            this.file = null;
+            this.$emit('update:modelValue', null)
+        },
+        updateValue(event) {
+            if(event.target.files) {
+                this.file = event.target.files;
+                this.$emit('update:modelValue', event.target.files)
+            } else {
+                this.limparCampo();
+                this.$emit('update:modelValue', null)
+            }
+
+        }
+    },
+
 }
 </script>
 

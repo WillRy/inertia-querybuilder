@@ -65,6 +65,13 @@ export default {
         if (this.$page.props.flash.error) {
             this.exibirError(this.$page.props.flash.error);
         }
+
+        window.onpopstate = (e) => {
+            let clone = Object.assign({}, history.state);
+            clone.props.flash = {error: null, success: null};
+
+            history.replaceState(clone, '');
+        }
     }
 }
 </script>

@@ -15,9 +15,16 @@
             selectLabel=""
             selectedLabel=""
             @update:model-value="updateValue"
+            :placeholder="placeholder"
+            :limitText="count => `e mais ${count}`"
+            :internal-search="false"
+            :limit="3"
         >
             <template v-if="noOptions" #noOptions>
                 {{ noOptions }}
+            </template>
+            <template v-if="noResult" #noResult>
+                {{ noResult }}
             </template>
         </VueMultiselect>
         <div v-if="error || $slots.error" class="errorMessage">
@@ -31,12 +38,19 @@
 import VueMultiselect from 'vue-multiselect'
 
 export default {
-    name: "BaseSelect",
+    name: "BaseSelectAjax",
     inheritAttrs: false,
     components: {
         VueMultiselect
     },
     props: {
+        placeholder: {
+            default: 'Selecione um valor'
+        },
+        noResult: {
+            type: String,
+            default: 'Não foram encontrados itens com esta pesquisa'
+        },
         noOptions: {
             type: String,
             default: 'Digite sua pesquisa'
@@ -69,7 +83,7 @@ export default {
         },
         empty: {
             type: Boolean,
-            default: true
+            default: false
         },
         error: {
             type: String,
@@ -77,7 +91,7 @@ export default {
         },
         remover: {
             type: Boolean,
-            default: true
+            default: false
         }
     },
     computed: {

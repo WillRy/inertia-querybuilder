@@ -1,38 +1,44 @@
 <template>
-    <ul v-if="paginasTotal > 1">
-        <li>
-            <a
-                @click.prevent="query(1)"
-                :class="{active: paginaEstaAtiva(1)}"
-                title="Primeira"
-            >
-                &lt;&lt;
-            </a>
-        </li>
-        <li v-for="pagina in paginas" :key="pagina">
-            <a
-                @click.prevent="query(pagina)"
-                :class="{active: paginaEstaAtiva(pagina)}"
-            >
-                {{ pagina }}
-            </a>
-        </li>
-        <li>
-            <a
-                @click.prevent="query(paginasTotal)"
-                :class="{active: paginaEstaAtiva(paginasTotal)}"
-                title="Última"
-            >
-                &gt;&gt;
-            </a>
-        </li>
-    </ul>
+    <div>
+        <ul v-if="paginasTotal > 1">
+            <li>
+                <a
+                    @click.prevent="query(1)"
+                    :class="{active: paginaEstaAtiva(1)}"
+                    title="Primeira"
+                >
+                    &lt;&lt;
+                </a>
+            </li>
+            <li v-for="pagina in paginas" :key="pagina">
+                <a
+                    @click.prevent="query(pagina)"
+                    :class="{active: paginaEstaAtiva(pagina)}"
+                >
+                    {{ pagina }}
+                </a>
+            </li>
+            <li>
+                <a
+                    @click.prevent="query(paginasTotal)"
+                    :class="{active: paginaEstaAtiva(paginasTotal)}"
+                    title="Última"
+                >
+                    &gt;&gt;
+                </a>
+            </li>
+        </ul>
+        <p class="total-registros" v-if="exibirTotal && total > 0">
+            <strong>Total:</strong> {{total}} resultados
+        </p>
+    </div>
 </template>
 
 <script>
 export default {
     name: "PaginacaoSemRouter",
     props: {
+        exibirTotal: false,
         porPagina: {
             type: Number,
             default: 1
@@ -81,7 +87,7 @@ export default {
 
 <style scoped>
 ul {
-    margin: 20px 0;
+    margin: 20px 0 8px 0px;
     text-align: center;
 }
 
@@ -94,10 +100,23 @@ li a {
     padding: 2px 8px;
     border-radius: 2px;
     margin: 4px;
+    user-select: none;
 }
 
 li a.router-link-exact-active, li a:hover, .active {
     background: var(--cor-principal);
     color: #fff;
+}
+
+.total-registros {
+    border: 2px solid #bbbfc4;
+    border-radius: 8px;
+    font-size: 14px;
+    font-weight: 400;
+    margin: 0 auto;
+    max-width: max-content;
+    padding: 4px 10px;
+    text-align: center;
+    background: #ebedf0;
 }
 </style>
